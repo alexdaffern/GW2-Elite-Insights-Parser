@@ -586,9 +586,10 @@ public static class SpeciesIDs
         Vloxx = 28106,
         EliteCosmicPiercer = 27929, // Also in convergence
         ChampionCosmicPiercer = 27958, // Also in convergence
-        SomethingCosmicPiercer = 28056, // Also in convergence - Spawned for 2 seconds in one raid encounter log, might be challenge/legendary mode npc
+        LegendaryCosmicPiercer = 28056, // Also in convergence - Spawns as minion of the Champion Cosmic Piercer, untargettable but "visible", disappears when master is killed
         ChampionAspectOfTheStaff = 28017,
         ChampionAspectOfTheSpear = 28033,
+        ChampionAspectOfTheSword = 28107,
         EliteCosmicBulwark = 28065, // Also in convergence
         ChampionCosmicBulwark = 27934, // Also in convergence
         ChampionCosmicSunderer = 27933,
@@ -638,7 +639,7 @@ public static class SpeciesIDs
         // - Artsariiv
         Artsariiv = 17949,
         TemporalAnomalyArtsariiv = 17870,
-        Spark = 17630,
+        SparkArtsariiv = 17630,
         SmallArtsariiv = 17811, // tiny adds
         MediumArtsariiv = 17694, // small adds
         BigArtsariiv = 17937, // big adds
@@ -698,6 +699,14 @@ public static class SpeciesIDs
         KryptisRift = SpeciesIDs.KryptisRift,
         // - Kinfall
         WhisperingShadow = 27010,
+        // - Solitary Throne
+        EternalTyrant = 28051,
+        ConstructOfGaldra = 28108,
+        FrostElemental = 27893,
+        Ember = 27987,
+        SparkEternalTyrant = 27998,
+        EarthElemental = 28042,
+        RimeSprite = 28098,
         #endregion FRACTALS
         #region GOLEMS
         MassiveGolem10M = 16169,
@@ -1163,7 +1172,7 @@ public static class SpeciesIDs
         // Raids
         InsectSwarm = 16120,
         // General
-        Unknown,
+        Unknown = int.MaxValue,
     }
 
     internal static readonly Vector3 GuardianChestPosition = new(-4770.21f, -20629.2f, -2401.27f);

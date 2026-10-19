@@ -25,6 +25,7 @@ public sealed class ProgramHelper : IDisposable
         EI = 0,
         Raw = 1,
         RawWithEIPreProcess = 2,
+        NotApplicable,
     }
 
     public ProgramHelper(Version parserVersion, ProgramSettings settings)
@@ -96,6 +97,7 @@ public sealed class ProgramHelper : IDisposable
     public static readonly string MapAPICacheLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/Content/MapList.json";
     public static readonly string SpecAPICacheLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/Content/SpecList.json";
     public static readonly string TraitAPICacheLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/Content/TraitList.json";
+    public static readonly string JSONSchemaLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/Content/schema.json";
     public static readonly string EILogPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/Logs/";
 
     public static readonly GW2APIController APIController = new(SkillAPICacheLocation, SpecAPICacheLocation, TraitAPICacheLocation, MapAPICacheLocation);
@@ -483,6 +485,10 @@ public sealed class ProgramHelper : IDisposable
         operation.Reset();
         try
         {
+            if (inspectMode == InspectionMode.NotApplicable)
+            {
+                throw new InvalidOperationException("ParseLogForInspection must have a valid inspection mode");
+            }
             operation.Start();
             var fInfo = new FileInfo(operation.InputFile);
 
@@ -503,21 +509,13 @@ public sealed class ProgramHelper : IDisposable
                 DetailedWvWParse = true,
             },
                                         APIController);
-            EvtcLog? inspectLog;
             ParsingFailureReason? failureReason;
-            switch (inspectMode)
+            EvtcLog? inspectLog = inspectMode switch
             {
-                case InspectionMode.Raw:
-                default:
-                    inspectLog = parser.ParseRawLog(operation, fInfo, out failureReason, false);
-                    break;
-                case InspectionMode.EI:
-                    inspectLog = parser.ParseLog(operation, fInfo, out failureReason, false);
-                    break;
-                case InspectionMode.RawWithEIPreProcess:
-                    inspectLog = parser.ParseRawLog(operation, fInfo, out failureReason, true);
-                    break;
-            }
+                InspectionMode.EI => parser.ParseLog(operation, fInfo, out failureReason, false),
+                InspectionMode.RawWithEIPreProcess => parser.ParseRawLog(operation, fInfo, out failureReason, true),
+                _ => parser.ParseRawLog(operation, fInfo, out failureReason, false),
+            };
             failureReason?.Throw();
             return inspectLog;
         }

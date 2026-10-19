@@ -26,6 +26,9 @@ internal class StatusEventsContainer
     public readonly Dictionary<long, WvWObjectiveStatusEvent> WvWObjectiveStatusEventsByKey = [];
     public readonly List<WvWObjectiveStatusEvent> WvWObjectiveStatusEvents = [];
 
+    public readonly List<PvPScoreUpdateEvent> PvPScoreUpdateEvents = [];
+    public readonly Dictionary<uint, List<PvPScoreUpdateEvent>> PvPScoreUpdateEventsByTeamID = [];
+
     public readonly Dictionary<AgentItem, List<BreakbarStateEvent>> BreakbarStateEvents = [];
     public readonly Dictionary<AgentItem, List<BreakbarPercentEvent>> BreakbarPercentEvents = [];
 
@@ -73,7 +76,9 @@ internal class StatusEventsContainer
     public readonly Dictionary<long, List<MissileEvent>> MissileEventsBySkillID = [];
     public readonly Dictionary<long, List<MissileEvent>> MissileEventsByTrackingID = [];
 
-    public readonly Dictionary<AgentItem, List<AgentInfoEvent>> AgentInfoEventsBySrc = [];
+    public readonly Dictionary<AgentItem, List<NPCInfoEvent>> NPCInfoEventsBySrc = [];
+
+    public readonly Dictionary<AgentItem, List<GadgetInfoEvent>> GadgetInfoEventsBySrc = [];
 
 
     internal void CleanTemp()

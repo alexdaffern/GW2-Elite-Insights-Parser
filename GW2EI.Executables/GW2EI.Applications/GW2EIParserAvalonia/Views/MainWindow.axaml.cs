@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -24,20 +22,6 @@ public sealed partial class MainWindow : Window, IDisposable
     private FileSystemWatcher? _logFileWatcher;
     private readonly IApplicationTrace _trace = null!;
 
-#if WINDOWS
-    private const string AssetName = "GW2EI-win-x64.zip";
-#elif OSX
-    private const string AssetName = "GW2EI-osx-x64.zip";
-#elif OSX_Arm
-    private const string AssetName = "GW2EI-osx-arm64.zip";
-#elif LINUX_ARM
-    private const string AssetName = "GW2EI-linux-arm64.zip";
-#elif LINUX
-    private const string AssetName = "GW2EI-linux-x64.zip";
-#else
-    private const string AssetName = "GW2EI-all.zip";
-#endif
-
     public MainWindow()
     {
         InitializeComponent();
@@ -49,7 +33,6 @@ public sealed partial class MainWindow : Window, IDisposable
         _trace = trace;
 
         UpdateFileWatcher();
-        UpdaterInitialCheck();
     }
 
     private async void AddFilesButton_Click(object? sender, RoutedEventArgs e)
@@ -263,36 +246,6 @@ public sealed partial class MainWindow : Window, IDisposable
         }
     }
 
-    private void UpdaterInitialCheck()
-    {
-        if (DataContext is not MainWindowViewModel viewModel)
-        {
-            return;
-        }
-
-#if DEBUG
-        long time = 0;
-#else 
-        long time = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-#endif
-        if (time - Settings.Default.UpdateLastChecked > 3600)
-        {
-            Settings.Default.UpdateLastChecked = time;
-            Task.Factory.StartNew(async () =>
-            {
-                List<string> traces = [];
-                Updater.UpdateInfo? info = await Updater.CheckForUpdate(AssetName, traces);
-                if (info != null)
-                {
-                    Settings.Default.UpdateAvailable = info.Value.UpdateAvailable;
-                    viewModel.UpdateVersionLabel(info.Value.UpdateAvailable);
-                }
-                traces.ForEach(x => _trace.Add("Updater: " + x));
-            }, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
-        }
-        viewModel.UpdateVersionLabel(Settings.Default.UpdateAvailable);
-    }
-
     private async void CheckUpdatesButton_Click(object? sender, RoutedEventArgs e)
     {
         if (DataContext is not MainWindowViewModel viewModel)
@@ -303,7 +256,7 @@ public sealed partial class MainWindow : Window, IDisposable
         _trace.Add("Updater: Checking for updates");
 
         var traces = new List<string>();
-        Updater.UpdateInfo? info = await Updater.CheckForUpdate(AssetName, traces);
+        Updater.UpdateInfo? info = await Updater.CheckForUpdate(MainWindowViewModel.AssetName, traces);
         traces.ForEach(x => _trace.Add("Updater: " + x));
 #if DEBUG
         var force = true;

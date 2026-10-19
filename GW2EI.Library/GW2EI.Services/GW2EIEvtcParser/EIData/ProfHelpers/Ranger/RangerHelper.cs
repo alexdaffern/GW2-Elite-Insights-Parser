@@ -567,6 +567,7 @@ internal static class RangerHelper
 
     internal static readonly IReadOnlyList<Buff> Buffs =
     [
+        new Buff("Number of Ranger Pets", NumberOfRangerPets, Source.Ranger, BuffStackType.Stacking, 99, BuffClassification.Other, BuffImages.RangerPets),
         new Buff("Counterattack (Ranger Sword)", CounterattackRangerSwordBuff, Source.Ranger, BuffClassification.Other, SkillImages.Counterattack),
         // Signets
         new Buff("Signet of Renewal", SignetOfRenewalBuff, Source.Ranger, BuffClassification.Other, SkillImages.SignetOfRenewal),
@@ -640,6 +641,11 @@ internal static class RangerHelper
         new Buff("Nurturing Bloom (1)", NurturingBloom1, Source.EncounterSpecific, BuffClassification.Other, SkillImages.WildWrath),
         new Buff("Nurturing Bloom (2)", NurturingBloom2, Source.EncounterSpecific, BuffClassification.Other, SkillImages.WildWrath),
     ];
+
+    public static List<BuffEvent> TransformRangerPetCount(CombatData combatData, AgentData agentData, SkillData skillData, EvtcVersionEvent evtcVersion)
+    {
+        return CreateBuffApplyAndRemovesBasedOnMinionLifespan(combatData, agentData, skillData, JuvenilePetIDs, NumberOfRangerPets, evtcVersion);
+    }
 
     public static void ProcessGadgets(IReadOnlyList<AgentItem> players, CombatData combatData)
     {
@@ -769,7 +775,7 @@ internal static class RangerHelper
             {
                 foreach (EffectEvent effect in sublimeConversions1)
                 {
-                    if (sublimeConversions2.Any(x => Math.Abs(x.Time - effect.Time) < ServerDelayConstant))
+                    if (sublimeConversions2.Any(x => x.IsAtTime(effect)))
                     {
                         (long, long) lifespan = effect.ComputeLifespan(log, 5000);
                         var connector = new PositionConnector(effect.Position);

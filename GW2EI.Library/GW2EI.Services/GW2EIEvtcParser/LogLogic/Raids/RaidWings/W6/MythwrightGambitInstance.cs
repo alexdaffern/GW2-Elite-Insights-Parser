@@ -19,7 +19,6 @@ internal class MythwrightGambitInstance : MythwrightGambit
     private readonly IReadOnlyList<MythwrightGambit> _subLogics;
     public MythwrightGambitInstance(int triggerID) : base(triggerID)
     {
-        LogID = LogIDs.LogMasks.Unsupported;
         Icon = InstanceIconMythwrightGambit;
         Extension = "mythgamb";
 
@@ -294,7 +293,7 @@ internal class MythwrightGambitInstance : MythwrightGambit
             {
                 case (int)TargetID.Kenut:
                 case (int)TargetID.Nikare:
-                    TwinLargos.AdjustFinalHPEvents(combatData, actor.AgentItem);
+                    SanitizeLastHealthUpdateEvents(actor, combatData);
                     break;
             }
         }

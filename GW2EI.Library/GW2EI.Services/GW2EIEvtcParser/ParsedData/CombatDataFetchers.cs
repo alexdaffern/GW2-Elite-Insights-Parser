@@ -155,6 +155,22 @@ partial class CombatData
     }
     #endregion WvW
 
+    #region PvP
+    public IReadOnlyList<PvPScoreUpdateEvent> GetPvPScoreUpdateEvents()
+    {
+        return _statusEvents.PvPScoreUpdateEvents;
+    }
+    public IReadOnlyList<PvPScoreUpdateEvent> GetPvPScoreUpdateEventsByTeamID(uint teamID)
+    {
+        if (_statusEvents.PvPScoreUpdateEventsByTeamID.TryGetValue(teamID, out var pvpScoreUpdateEvents))
+        {
+            return pvpScoreUpdateEvents;
+        }
+        return [];
+    }
+
+    #endregion PvP
+
     #region MAP
 
     public MapIDEvent? GetMapIDEvent()
@@ -400,7 +416,20 @@ partial class CombatData
     }
     public IReadOnlyList<AgentInfoEvent> GetAgentInfoEvents(AgentItem src)
     {
-        return GetTimeValueOrEmpty(_statusEvents.AgentInfoEventsBySrc, src.EnglobingAgentItem);
+        return src.Spec switch
+        {
+            Spec.NPC => GetNPCInfoEvents(src),
+            Spec.Gadget => GetGadgetInfoEvents(src),
+            _ => [],
+        };
+    }
+    public IReadOnlyList<GadgetInfoEvent> GetGadgetInfoEvents(AgentItem src)
+    {
+        return GetTimeValueOrEmpty(_statusEvents.GadgetInfoEventsBySrc, src.EnglobingAgentItem);
+    }
+    public IReadOnlyList<NPCInfoEvent> GetNPCInfoEvents(AgentItem src)
+    {
+        return GetTimeValueOrEmpty(_statusEvents.NPCInfoEventsBySrc, src.EnglobingAgentItem);
     }
 
     #endregion INFO
@@ -1475,6 +1504,9 @@ partial class CombatData
 
         // WvW
         FillFromRangeUnique(events, seen, _statusEvents.WvWObjectiveStatusEvents);
+
+        // PvP
+        FillFromRangeUnique(events, seen, _statusEvents.PvPScoreUpdateEvents);
 
         // BUILD / DATE
         FillUnique(events, seen, _metaDataEvents.EvtcVersionEvent);

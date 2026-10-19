@@ -170,20 +170,19 @@ internal class AiKeeperOfThePeak : SunquaPeak
 
     internal override IReadOnlyList<TargetID> GetTrashMobsIDs()
     {
-        var trashIDs = new List<TargetID>(9 + base.GetTrashMobsIDs().Count);
-        trashIDs.AddRange(base.GetTrashMobsIDs());
-        trashIDs.Add(TargetID.FearDemon);
-        trashIDs.Add(TargetID.GuiltDemon);
-        trashIDs.Add(TargetID.AiDoubtDemon);
-        trashIDs.Add(TargetID.PlayerDoubtDemon);
-        trashIDs.Add(TargetID.EnragedWaterSprite);
-        // Transition sorrow demons
-        trashIDs.Add(TargetID.TransitionSorrowDemon1);
-        trashIDs.Add(TargetID.TransitionSorrowDemon2);
-        trashIDs.Add(TargetID.TransitionSorrowDemon3);
-        trashIDs.Add(TargetID.TransitionSorrowDemon4);
-
-        return trashIDs;
+        return [
+            .. base.GetTrashMobsIDs(),
+            TargetID.FearDemon,
+            TargetID.GuiltDemon,
+            TargetID.AiDoubtDemon,
+            TargetID.PlayerDoubtDemon,
+            TargetID.EnragedWaterSprite,
+            // Transition sorrow demons
+            TargetID.TransitionSorrowDemon1,
+            TargetID.TransitionSorrowDemon2,
+            TargetID.TransitionSorrowDemon3,
+            TargetID.TransitionSorrowDemon4,
+        ];
     }
 
     private static bool HasDarkMode(AgentData agentData)
@@ -668,7 +667,7 @@ internal class AiKeeperOfThePeak : SunquaPeak
                 environmentDecorations.Add(new CircleDecoration(600, (start, end), Colors.Orange, 0.15, position).UsingGrowingEnd(end));
                 if (hasDetonates && effect.Dst.TryGetCurrentPosition(log, end, out var endPos))
                 {
-                    EffectEvent? detonate = detonates.FirstOrDefault(x => Math.Abs(x.Time - end) < ServerDelayConstant && (x.Position - endPos.Value).XY().Length() < maxDist);
+                    EffectEvent? detonate = detonates.FirstOrDefault(x => x.IsAtTime(end) && (x.Position - endPos.Value).XY().Length() < maxDist);
                     if (detonate != null)
                     {
                         environmentDecorations.Add(new CircleDecoration(600, (detonate.Time, detonate.Time + 300), Colors.Red, 0.15, new PositionConnector(detonate.Position)));

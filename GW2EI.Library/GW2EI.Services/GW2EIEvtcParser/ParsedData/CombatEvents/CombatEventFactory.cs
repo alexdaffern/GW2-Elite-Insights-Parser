@@ -195,13 +195,14 @@ partial class CombatData
                 break;
             case StateChange.SkillInfo:
             case StateChange.SkillTiming:
+            case StateChange.SkillStep:
                 if (metaDataEvents.SkillInfoEvents.TryGetValue(stateChangeEvent.SkillID, out var skillInfoEvent))
                 {
-                    skillInfoEvent.CompleteSkillInfoEvent(stateChangeEvent);
+                    skillInfoEvent.CompleteSkillInfoEvent(stateChangeEvent, evtcVersion);
                 }
                 else
                 {
-                    skillInfoEvent = new SkillInfoEvent(stateChangeEvent, skillData);
+                    skillInfoEvent = new SkillInfoEvent(stateChangeEvent, skillData, evtcVersion);
                     metaDataEvents.SkillInfoEvents[stateChangeEvent.SkillID] = skillInfoEvent;
                 }
                 break;
@@ -684,8 +685,23 @@ partial class CombatData
                 Add(statusEvents.FlyToEventsBySrc, flyToEvent.Src, flyToEvent);
                 break;
             case StateChange.AgentInfo:
-                var agentInfoEvent = new AgentInfoEvent(stateChangeEvent, agentData, evtcVersion);
-                Add(_statusEvents.AgentInfoEventsBySrc, agentInfoEvent.Src, agentInfoEvent);
+                var agentInfoAgent = agentData.GetAgent(stateChangeEvent.SrcAgent, stateChangeEvent.Time);
+                switch (agentInfoAgent.Spec)
+                {
+                    case Spec.NPC:
+                        var npcInfoEvent = new NPCInfoEvent(stateChangeEvent, agentData, evtcVersion);
+                        Add(_statusEvents.NPCInfoEventsBySrc, npcInfoEvent.Src, npcInfoEvent);
+                        break;
+                    case Spec.Gadget:
+                        var gadgetInfoEvent = new GadgetInfoEvent(stateChangeEvent, agentData, evtcVersion);
+                        Add(_statusEvents.GadgetInfoEventsBySrc, gadgetInfoEvent.Src, gadgetInfoEvent);
+                        break;
+                }
+                break;
+            case StateChange.PvPScoreUpdate:
+                var pvpScoreUpdate = new PvPScoreUpdateEvent(stateChangeEvent);
+                _statusEvents.PvPScoreUpdateEvents.Add(pvpScoreUpdate);
+                Add(_statusEvents.PvPScoreUpdateEventsByTeamID, pvpScoreUpdate.TeamID, pvpScoreUpdate);
                 break;
             default:
                 break;
@@ -768,9 +784,9 @@ partial class CombatData
         }
         return id switch
         {
-            SkillIDs.ArcDPSGenericEmote => new EmoteEvent(startItem, agentData, skillData, endItem, logData.EvtcLogEnd, emoteGUIDict),
+            SkillIDs.ArcDPSEmote => new EmoteEvent(startItem, agentData, skillData, endItem, logData.EvtcLogEnd, emoteGUIDict),
             SkillIDs.ArcDPSGenericGadgetInteract => new GadgetInteractEvent(startItem, agentData, skillData, endItem, logData.EvtcLogEnd),
-            SkillIDs.ArcDPSGenericPickUp => new BundlePickUpEvent(startItem, agentData, skillData, endItem, logData.EvtcLogEnd),
+            SkillIDs.ArcDPSPickUp => new BundlePickUpEvent(startItem, agentData, skillData, endItem, logData.EvtcLogEnd),
             _ => new AnimatedSkillCastEvent(startItem, agentData, skillData, endItem, logData.EvtcLogEnd),
         };
     }

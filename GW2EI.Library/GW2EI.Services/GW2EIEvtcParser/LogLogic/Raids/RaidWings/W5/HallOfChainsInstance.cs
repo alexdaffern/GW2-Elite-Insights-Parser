@@ -23,7 +23,6 @@ internal class HallOfChainsInstance : HallOfChains
     private readonly IReadOnlyList<HallOfChains> _subLogics;
     public HallOfChainsInstance(int triggerID) : base(triggerID)
     {
-        LogID = LogIDs.LogMasks.Unsupported;
         Icon = InstanceIconHallOfChains;
         Extension = "hallchains";
 
@@ -354,7 +353,7 @@ internal class HallOfChainsInstance : HallOfChains
             switch (target.ID)
             {
                 case (int)TargetID.SoullessHorror:
-                    SoullessHorror.HandleSoullessHorrorFinalHPUpdate(combatData, target);
+                    SanitizeLastHealthUpdateEvents(target, combatData);
                     break;
                 default:
                     break;

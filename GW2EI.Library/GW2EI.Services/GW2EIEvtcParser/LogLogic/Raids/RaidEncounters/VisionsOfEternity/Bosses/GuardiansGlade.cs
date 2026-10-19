@@ -435,12 +435,7 @@ internal class GuardiansGlade : VisionsOfEternityRaidEncounter
                     }
 
                     // Tantrum Breakbar
-                    var breakbarUpdates = target.GetBreakbarPercentUpdates(log);
-                    var (_, breakbarActives, _, _) = target.GetBreakbarStatus(log);
-                    foreach (var segment in breakbarActives)
-                    {
-                        replay.Decorations.AddActiveBreakbar(segment.TimeSpan, target, breakbarUpdates);
-                    }
+                    replay.Decorations.AddActiveBreakbars(log, target);
 
                     // Tantrum Range
                     var tantrumCasts = target.GetAnimatedCastEvents(log).Where(x => x.SkillID == KelaTantrum1 || x.SkillID == KelaTantrum2).ToList();
@@ -657,7 +652,7 @@ internal class GuardiansGlade : VisionsOfEternityRaidEncounter
         for (var i = 0; i < effects.Count; i++)
         {
             var effect = effects[i];
-            var (start, end) = effect.ComputeDynamicLifespan(log, defaultDuration);
+            var (start, end) = effect.ComputeLifespan(log, defaultDuration);
             var next = effects.ElementAtOrDefault(i + 1);
             if (next?.Time < end + maxInterval) // avoid overlap and pulsing by using start of next as end
             {
