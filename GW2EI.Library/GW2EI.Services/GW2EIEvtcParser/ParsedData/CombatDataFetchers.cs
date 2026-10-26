@@ -155,6 +155,22 @@ partial class CombatData
     }
     #endregion WvW
 
+    #region PvP
+    public IReadOnlyList<PvPScoreUpdateEvent> GetPvPScoreUpdateEvents()
+    {
+        return _statusEvents.PvPScoreUpdateEvents;
+    }
+    public IReadOnlyList<PvPScoreUpdateEvent> GetPvPScoreUpdateEventsByTeamID(uint teamID)
+    {
+        if (_statusEvents.PvPScoreUpdateEventsByTeamID.TryGetValue(teamID, out var pvpScoreUpdateEvents))
+        {
+            return pvpScoreUpdateEvents;
+        }
+        return [];
+    }
+
+    #endregion PvP
+
     #region MAP
 
     public MapIDEvent? GetMapIDEvent()
@@ -373,17 +389,22 @@ partial class CombatData
 
     public BuffInfoEvent? GetBuffInfoEvent(long buffID)
     {
-        return _metaDataEvents.BuffInfoEvents.GetValueOrDefault(buffID);
+        return _metaDataEvents.BuffInfoEventByBuffID.GetValueOrDefault(buffID);
     }
 
-    public IReadOnlyList<BuffInfoEvent> GetBuffInfoEvent(byte category)
+    public IReadOnlyList<BuffInfoEvent> GetBuffInfoEventsByCategory(byte category)
     {
         return _metaDataEvents.BuffInfoEventsByCategory.GetValueOrEmpty(category);
     }
 
     public SkillInfoEvent? GetSkillInfoEvent(long skillID)
     {
-        return _metaDataEvents.SkillInfoEvents.GetValueOrDefault(skillID);
+        return _metaDataEvents.SkillInfoEventBySkillID.GetValueOrDefault(skillID);
+    }
+
+    public IReadOnlyList<SkillInfoEvent> GetSkillInfoEvents()
+    {
+        return _metaDataEvents.SkillInfoEvents;
     }
 
     public IReadOnlyList<GadgetModelInfoEvent> GetGadgetModelInfoEvents(AgentItem src)
@@ -400,7 +421,45 @@ partial class CombatData
     }
     public IReadOnlyList<AgentInfoEvent> GetAgentInfoEvents(AgentItem src)
     {
-        return GetTimeValueOrEmpty(_statusEvents.AgentInfoEventsBySrc, src.EnglobingAgentItem);
+        return src.Spec switch
+        {
+            Spec.NPC => GetNPCInfoEvents(src),
+            Spec.Gadget => GetGadgetInfoEvents(src),
+            _ => [],
+        };
+    }
+    public IReadOnlyList<GadgetInfoEvent> GetGadgetInfoEvents(AgentItem src)
+    {
+        return GetTimeValueOrEmpty(_statusEvents.GadgetInfoEventsBySrc, src.EnglobingAgentItem);
+    }
+    public IReadOnlyList<NPCInfoEvent> GetNPCInfoEvents(AgentItem src)
+    {
+        return GetTimeValueOrEmpty(_statusEvents.NPCInfoEventsBySrc, src.EnglobingAgentItem);
+    }
+
+    public string? GetNPCRankPrefix(AgentItem src)
+    {
+        var agentInfo = GetNPCInfoEvents(src).FirstOrDefault();
+        if (agentInfo != null && agentInfo.SpeciesFlags != 0 && agentInfo.DecorateName)
+        {
+            if (agentInfo.IsVeteran)
+            {
+                return "Veteran ";
+            }
+            else if (agentInfo.IsElite)
+            {
+                return "Elite ";
+            }
+            else if (agentInfo.IsChampion)
+            {
+                return "Champion ";
+            }
+            else if (agentInfo.IsLegendary)
+            {
+                return "Legendary ";
+            }
+        }
+        return null;
     }
 
     #endregion INFO
@@ -1476,6 +1535,9 @@ partial class CombatData
         // WvW
         FillFromRangeUnique(events, seen, _statusEvents.WvWObjectiveStatusEvents);
 
+        // PvP
+        FillFromRangeUnique(events, seen, _statusEvents.PvPScoreUpdateEvents);
+
         // BUILD / DATE
         FillUnique(events, seen, _metaDataEvents.EvtcVersionEvent);
         FillUnique(events, seen, _metaDataEvents.GW2BuildEvent);
@@ -1501,9 +1563,9 @@ partial class CombatData
         FillFromRangeUnique(events, seen, _metaDataEvents.GuildEvents.Values.SelectMany(x => x));
 
         // INFO
-        FillFromRangeUnique(events, seen, _metaDataEvents.BuffInfoEvents.Values);
+        FillFromRangeUnique(events, seen, _metaDataEvents.BuffInfoEventByBuffID.Values);
         FillFromRangeUnique(events, seen, _metaDataEvents.BuffInfoEventsByCategory.Values.SelectMany(x => x));
-        FillFromRangeUnique(events, seen, _metaDataEvents.SkillInfoEvents.Values);
+        FillFromRangeUnique(events, seen, _metaDataEvents.SkillInfoEventBySkillID.Values);
 
         // ERRORS
         FillFromRangeUnique(events, seen, _metaDataEvents.ErrorEvents);

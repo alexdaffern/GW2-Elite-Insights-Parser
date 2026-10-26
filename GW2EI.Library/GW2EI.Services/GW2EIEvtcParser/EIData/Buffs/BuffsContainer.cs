@@ -36,7 +36,7 @@ public class BuffsContainer
         if (foodIDs.Count == 1)
         {
             var foodID = foodIDs[0];
-            foreach (BuffInfoEvent buffInfoEvent in combatData.GetBuffInfoEvent(foodID))
+            foreach (BuffInfoEvent buffInfoEvent in combatData.GetBuffInfoEventsByCategory(foodID))
             {
                 if (!buffIDs.Contains(buffInfoEvent.BuffID))
                 {
@@ -52,7 +52,7 @@ public class BuffsContainer
         if (enhancementIDs.Count == 1)
         {
             var enhancementID = enhancementIDs[0];
-            foreach (BuffInfoEvent buffInfoEvent in combatData.GetBuffInfoEvent(enhancementID))
+            foreach (BuffInfoEvent buffInfoEvent in combatData.GetBuffInfoEventsByCategory(enhancementID))
             {
                 if (!buffIDs.Contains(buffInfoEvent.BuffID))
                 {
@@ -70,17 +70,7 @@ public class BuffsContainer
             }
             return x.First();
         });
-        operation.UpdateProgressWithCancellationCheck("Parsing: Adjusting Skill icons using buffs");
-        var adjusted = 0;
-        foreach (var pair in BuffsByIDs)
-        {
-            if (skillData.TryGet(pair.Key, out var skill))
-            {
-                adjusted++;
-                skill.OverrideFromBuff(pair.Value);
-            }
-        }
-        operation.UpdateProgressWithCancellationCheck($"Parsing: Adjusted {adjusted} Skill icons using buffs");
+        AdjustSkillIconsFromBuffs(BuffsByIDs, skillData, operation);
         operation.UpdateProgressWithCancellationCheck("Parsing: Adjusting Buffs");
         BuffInfoSolver.AdjustBuffs(combatData, BuffsByIDs, operation);
         foreach (Buff buff in currentBuffs)
@@ -174,6 +164,21 @@ public class BuffsContainer
                 }
             }
         }
+    }
+
+    internal static void AdjustSkillIconsFromBuffs(IReadOnlyDictionary<long, Buff> buffsByIDs, SkillData skillData, ParserController operation)
+    {
+        operation.UpdateProgressWithCancellationCheck("Parsing: Adjusting Skill icons using buffs");
+        var adjusted = 0;
+        foreach (var pair in buffsByIDs)
+        {
+            if (skillData.TryGet(pair.Key, out var skill))
+            {
+                adjusted++;
+                skill.OverrideFromBuff(pair.Value);
+            }
+        }
+        operation.UpdateProgressWithCancellationCheck($"Parsing: Adjusted {adjusted} Skill icons using buffs");
     }
 
     internal static List<Buff> GetCurrentBuffs(CombatData combatData)

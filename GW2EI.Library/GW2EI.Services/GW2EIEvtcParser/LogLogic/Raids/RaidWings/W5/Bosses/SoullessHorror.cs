@@ -5,7 +5,6 @@ using GW2EIEvtcParser.Extensions;
 using GW2EIEvtcParser.ParsedData;
 using GW2EIEvtcParser.ParserHelpers;
 using static GW2EIEvtcParser.AchievementEligibilityIDs;
-using static GW2EIEvtcParser.ArcDPSEnums;
 using static GW2EIEvtcParser.EIData.Mechanic.MechanicSeverity;
 using static GW2EIEvtcParser.LogLogic.LogLogicPhaseUtils;
 using static GW2EIEvtcParser.LogLogic.LogLogicUtils;
@@ -124,23 +123,11 @@ internal class SoullessHorror : HallOfChains
             }
         }
     }
-    internal static void HandleSoullessHorrorFinalHPUpdate(List<CombatItem> combatData, SingleActor soullessHorror)
-    {
-        // discard hp update events after determined apply
-        CombatItem? determined895Apply = combatData.LastOrDefault(x => x.SkillID == Determined895 && x.IsBuffApplyEvent() && x.DstMatchesAgent(soullessHorror.AgentItem));
-        if (determined895Apply != null)
-        {
-            foreach (var combatEvent in combatData.Where(x => x.IsStateChange == StateChange.HealthUpdate && x.SrcMatchesAgent(soullessHorror.AgentItem) && x.Time >= determined895Apply.Time))
-            {
-                combatEvent.OverrideSrcAgent(_unknownAgent);
-            }
-        }
-    }
     internal override void EIEvtcParse(ulong gw2Build, EvtcVersionEvent evtcVersion, LogData logData, AgentData agentData, List<CombatItem> combatData, IReadOnlyDictionary<uint, ExtensionHandler> extensions)
     {
         base.EIEvtcParse(gw2Build, evtcVersion, logData, agentData, combatData, extensions);
         SingleActor soullessHorror = Targets.FirstOrDefault(x => x.IsSpecies(TargetID.SoullessHorror)) ?? throw new MissingKeyActorsException("Soulless Horror not found");
-        HandleSoullessHorrorFinalHPUpdate(combatData, soullessHorror);
+        SanitizeLastHealthUpdateEvents(soullessHorror, combatData);
     }
 
     internal static IReadOnlyList<SubPhasePhaseData> ComputePhases(ParsedEvtcLog log, SingleActor soullessHorror, IReadOnlyList<SingleActor> targets, EncounterPhaseData encounterPhase, bool requirePhases)

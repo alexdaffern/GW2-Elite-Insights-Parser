@@ -255,7 +255,7 @@ public static class MechanicIDs
     public static readonly int Mech_DeimosSelectedByGreen = BastionOfThePenitentMask | ++bastionOfThePenitentCount;
     public static readonly int Mech_DeimosGreenTeleport = BastionOfThePenitentMask | ++bastionOfThePenitentCount;
     public static readonly int Mech_UnnaturalSignet = BastionOfThePenitentMask | ++bastionOfThePenitentCount;
-    #endregion WING 4 
+    #endregion WING 4
     #region WING 5
     private static int hallOfChainsCount = 0;
     public static readonly int Mech_FracturedSpirit = HallOfChainsMask | ++hallOfChainsCount;
@@ -477,7 +477,7 @@ public static class MechanicIDs
     public static readonly int Mech_BlobOfBlight = MountBalriorMask | ++mountBalriorCount;
     public static readonly int Mech_BlobOfBlightTarget = MountBalriorMask | ++mountBalriorCount;
     public static readonly int Mech_BoonsCorruptedGreer = MountBalriorMask | ++mountBalriorCount;
-    public static readonly int Mech_EmpoweredGreer = MountBalriorMask | ++mountBalriorCount;
+    public static readonly int Mech_EmpoweredGreerEncounter = MountBalriorMask | ++mountBalriorCount;
     public static readonly int Mech_ChorusOfThunder = MountBalriorMask | ++mountBalriorCount;
     public static readonly int Mech_ChorusOfThunderTarget = MountBalriorMask | ++mountBalriorCount;
     public static readonly int Mech_DiscordantThunder = MountBalriorMask | ++mountBalriorCount;
@@ -545,6 +545,11 @@ public static class MechanicIDs
     public static readonly int Mech_UraReturn = MountBalriorMask | ++mountBalriorCount;
     public static readonly int Mech_RisingPressure = MountBalriorMask | ++mountBalriorCount;
     public static readonly int Mech_TitanicResistance = MountBalriorMask | ++mountBalriorCount;
+    public static readonly int Mech_EmpoweredGreer = MountBalriorMask | ++mountBalriorCount;
+    public static readonly int Mech_EmpoweredEreg = MountBalriorMask | ++mountBalriorCount;
+    public static readonly int Mech_EmpoweredGree = MountBalriorMask | ++mountBalriorCount;
+    public static readonly int Mech_EmpoweredReeg = MountBalriorMask | ++mountBalriorCount;
+    public static readonly int Mech_EmpoweredGreerEncounterReflect = MountBalriorMask | ++mountBalriorCount;
     #endregion WING 8
     #endregion RAID WINGS
 
@@ -928,32 +933,43 @@ public static class MechanicIDs
     public static readonly int Mech_AtePlayer = VoEMask | ++_voeCount;
     public static readonly int Mech_PlayerEaten = VoEMask | ++_voeCount;
     public static readonly int Mech_TankEaten = VoEMask | ++_voeCount;
-    public static readonly int Mech_AnnihilatingOrb = VoEMask | ++_voeCount;
+    public static readonly int Mech_AnnihilatingOrbHit = VoEMask | ++_voeCount;
     public static readonly int Mech_AnnihilatingOrbShockwave = VoEMask | ++_voeCount;
     public static readonly int Mech_AnnihilatingOrbShockwaveNoStab = VoEMask | ++_voeCount;
-    public static readonly int Mech_NexusOfEternity3GreenSelect = VoEMask | ++_voeCount;
-    public static readonly int Mech_JudgmentOfEternity = VoEMask | ++_voeCount;
-    public static readonly int Mech_DivisionEternal = VoEMask | ++_voeCount;
-    public static readonly int Mech_SurroundingCurse = VoEMask | ++_voeCount;
-    public static readonly int Mech_CosmicCharge = VoEMask | ++_voeCount;
-    public static readonly int Mech_ThousandStrikes = VoEMask | ++_voeCount;
-    public static readonly int Mech_SliceThroughReality = VoEMask | ++_voeCount;
-    public static readonly int Mech_VisionsOfEternity = VoEMask | ++_voeCount;
-    public static readonly int Mech_ProbabilityDistribution = VoEMask | ++_voeCount;
-    public static readonly int Mech_RagingStorm = VoEMask | ++_voeCount;
-    public static readonly int Mech_ExcisionExtremis = VoEMask | ++_voeCount;
-    public static readonly int Mech_Worldpiercer = VoEMask | ++_voeCount;
-    public static readonly int Mech_NexusOfEternity2GreenSelect = VoEMask | ++_voeCount;
-    public static readonly int Mech_AscensionsSacrifice = VoEMask | ++_voeCount;
-    public static readonly int Mech_EternalReflection = VoEMask | ++_voeCount;
-    public static readonly int Mech_EchoingBlade = VoEMask | ++_voeCount;
+    public static readonly int Mech_JudgementOfEternityTarget = VoEMask | ++_voeCount;
+    public static readonly int Mech_JudgmentOfEternityHit = VoEMask | ++_voeCount;
+    public static readonly int Mech_DivisionEternalHit = VoEMask | ++_voeCount;
+    public static readonly int Mech_SurroundingCurseHit = VoEMask | ++_voeCount;
+    public static readonly int Mech_CosmicChargeHit = VoEMask | ++_voeCount;
+    public static readonly int Mech_ThousandStrikesHit = VoEMask | ++_voeCount;
+    public static readonly int Mech_SliceThroughRealityHit = VoEMask | ++_voeCount;
+    public static readonly int Mech_VisionsOfEternityHit = VoEMask | ++_voeCount;
+    public static readonly int Mech_ProbabilityDistributionHit = VoEMask | ++_voeCount;
+    public static readonly int Mech_RagingStormHit = VoEMask | ++_voeCount;
+    public static readonly int Mech_ExcisionExtremisHit = VoEMask | ++_voeCount;
+    public static readonly int Mech_WorldpiercerHit = VoEMask | ++_voeCount;
+    public static readonly int Mech_AscensionSacrificeTarget = VoEMask | ++_voeCount;
+    public static readonly int Mech_AscensionsSacrificeHit = VoEMask | ++_voeCount;
+    public static readonly int Mech_EternalReflectionHit = VoEMask | ++_voeCount;
+    public static readonly int Mech_EchoingBladeHit = VoEMask | ++_voeCount;
     public static readonly int Mech_VloxxEmpowered = VoEMask | ++_voeCount;
-    public static readonly int Mech_VloxxEmpoweredRemoved = VoEMask | ++_voeCount;
+    public static readonly int Mech_VloxxEmpoweredLost = VoEMask | ++_voeCount;
     public static readonly int Mech_DamageImmunity = VoEMask | ++_voeCount;
     public static readonly int Mech_Ascension = VoEMask | ++_voeCount;
     public static readonly int Mech_AscensionRemove = VoEMask | ++_voeCount;
-    public static readonly int Mech_NexusOfEternitySpreadAndPuddleSelect = VoEMask | ++_voeCount;
-    public static readonly int Mech_Excision = VoEMask | ++_voeCount;
+    public static readonly int Mech_ProbabilityDistributionTarget = VoEMask | ++_voeCount;
+    public static readonly int Mech_ExcisionHit = VoEMask | ++_voeCount;
+    public static readonly int Mech_ATrueVisionaryLost = VoEMask | ++_voeCount;
+    public static readonly int Mech_ATrueVisionaryKept = VoEMask | ++_voeCount;
+    public static readonly int Mech_WorldpiercerKilled = VoEMask | ++_voeCount;
+    public static readonly int Mech_VloxxEmpoweredSelf = VoEMask | ++_voeCount;
+    public static readonly int Mech_VloxxEmpoweredStaff = VoEMask | ++_voeCount;
+    public static readonly int Mech_VloxxEmpoweredSpear = VoEMask | ++_voeCount;
+    public static readonly int Mech_VloxxEmpoweredSword = VoEMask | ++_voeCount;
+    public static readonly int Mech_VloxxEmpoweredRemoved = VoEMask | ++_voeCount;
+    public static readonly int Mech_VloxxFixated = VoEMask | ++_voeCount;
+    public static readonly int Mech_VloxxFixatedLost = VoEMask | ++_voeCount;
+    public static readonly int Mech_VloxxAspectWeaponGeneratedOrbs = VoEMask | ++_voeCount;
     #endregion VOE
 
     #endregion RAID ENCOUNTERS
@@ -965,6 +981,7 @@ public static class MechanicIDs
     private const int SilentSurfMask = FractalMask | 0x00040000;
     private const int LonelyTowerMask = FractalMask | 0x00050000;
     private const int KinfallMask = FractalMask | 0x00060000;
+    private const int SolitaryThroneMask = FractalMask | 0x00070000;
 
     private static int _fractalCount = 0;
     public static readonly int Mech_FluxBombBuff = FractalMask | ++_fractalCount;
@@ -1164,6 +1181,27 @@ public static class MechanicIDs
     public static readonly int Mech_EmpathicManipulationGuiltInterrupt = SunquaPeakMask | ++_sunquaPeakCount;
     public static readonly int Mech_CacophonousMind = SunquaPeakMask | ++_sunquaPeakCount;
     #endregion SUNQUA PEAK
+    #region SOLITARY THRONE
+    private static int _solitaryThroneCount = 0;
+    public static readonly int Mech_CosmicBlastTarget = SolitaryThroneMask | ++_solitaryThroneCount;
+    public static readonly int Mech_CosmicBlastHit = SolitaryThroneMask | ++_solitaryThroneCount;
+    public static readonly int Mech_GravityFieldTarget = SolitaryThroneMask | ++_solitaryThroneCount;
+    public static readonly int Mech_GravityFieldHit = SolitaryThroneMask | ++_solitaryThroneCount;
+    public static readonly int Mech_AstralBarrageHit = SolitaryThroneMask | ++_solitaryThroneCount;
+    public static readonly int Mech_CosmicWaveHit = SolitaryThroneMask | ++_solitaryThroneCount;
+    public static readonly int Mech_AstralOrbHit = SolitaryThroneMask | ++_solitaryThroneCount;
+    public static readonly int Mech_AstralOrbReflect = SolitaryThroneMask | ++_solitaryThroneCount;
+    public static readonly int Mech_AstralPulseHit = SolitaryThroneMask | ++_solitaryThroneCount;
+    public static readonly int Mech_SelfDestructHit = SolitaryThroneMask | ++_solitaryThroneCount;
+    public static readonly int Mech_ExplodingEnergyHit = SolitaryThroneMask | ++_solitaryThroneCount;
+    public static readonly int Mech_CelestialImpactHit = SolitaryThroneMask | ++_solitaryThroneCount;
+    public static readonly int Mech_StormSummoningHit = SolitaryThroneMask | ++_solitaryThroneCount;
+    public static readonly int Mech_AttracingRimeSprites = SolitaryThroneMask | ++_solitaryThroneCount;
+    public static readonly int Mech_FrigidWindsHit = SolitaryThroneMask | ++_solitaryThroneCount;
+    public static readonly int Mech_JadeShardsHit = SolitaryThroneMask | ++_solitaryThroneCount;
+    public static readonly int Mech_SearingRadialHit = SolitaryThroneMask | ++_solitaryThroneCount;
+    public static readonly int Mech_LightningStrikeHit = SolitaryThroneMask | ++_solitaryThroneCount;
+    #endregion SOLITARY THRONE
     #endregion FRACTALS
 
     #region CONVERGENCE

@@ -101,7 +101,7 @@ public partial class CombatData
 
     public bool HasExtraProcessing { get; private set; }
 
-    private void EIBuffParse(IReadOnlyList<AgentItem> players, SkillData skillData, LogData logData, EvtcVersionEvent evtcVersion)
+    private void EIBuffParse(IReadOnlyList<AgentItem> players, AgentData agentData, SkillData skillData, LogData logData, EvtcVersionEvent evtcVersion)
     {
         //TODO_PERF(Rennorb) @find average complexity
         var toAdd = new List<BuffEvent>(players.Count * 10);
@@ -132,6 +132,9 @@ public partial class CombatData
                 ElementalistHelper.RemoveDualBuffs(GetBuffDataByDst(p), _buffData, skillData);
             }
         }
+        toAdd.AddRange(MesmerHelper.TransformMesmerCloneStorage(this, agentData, skillData, evtcVersion));
+        toAdd.AddRange(TroubadourHelper.TransformTroubadourNoteStorage(this, agentData, skillData, evtcVersion));
+        toAdd.AddRange(RangerHelper.TransformRangerPetCount(this, agentData, skillData, evtcVersion));
         if (cleanLethalTempo)
         {
             _buffData[LethalTempo].RemoveAll(x => x.BuffID == NoBuff);
@@ -461,7 +464,7 @@ public partial class CombatData
         ProfHelper.ProcessRacialGadgets(players, this);
         // Custom events
         operation.UpdateProgressWithCancellationCheck("Parsing: Creating Custom Buff Events");
-        EIBuffParse(players, skillData, logData, evtcVersion);
+        EIBuffParse(players, agentData, skillData, logData, evtcVersion);
         operation.UpdateProgressWithCancellationCheck("Parsing: Creating Custom Damage Events");
         EIDamageParse(skillData, agentData, logData);
         operation.UpdateProgressWithCancellationCheck("Parsing: Creating Custom Cast Events");
@@ -561,8 +564,7 @@ public partial class CombatData
             if (combatItem.IsEssentialMetadata)
             {
                 AddStateChangeEvent(logData.EvtcLogOffset, combatItem, agentData,
-                    skillData, wepSwaps, buffEvents, stunBreakData,
-                    evtcVersion, settings, apiController);
+                    skillData, wepSwaps, buffEvents, stunBreakData, settings, apiController);
             }
         }
         foreach (CombatItem combatItem in combatEvents)
@@ -575,11 +577,11 @@ public partial class CombatData
             {
                 if (combatItem.IsBuffApplyEvent())
                 {
-                    AddBuffApplyEvent(combatItem, buffEvents, agentData, skillData, evtcVersion);
+                    AddBuffApplyEvent(combatItem, buffEvents, agentData, skillData);
                 }
                 else
                 {
-                    AddBuffRemoveEvent(combatItem, buffEvents, agentData, skillData, evtcVersion);
+                    AddBuffRemoveEvent(combatItem, buffEvents, agentData, skillData);
                 }
             }
             else if (combatItem.IsDamageEvent())
@@ -590,7 +592,7 @@ public partial class CombatData
                 }
                 else if (combatItem.IsBuffDamageEvent())
                 {
-                    AddBuffDamageDamageEvent(combatItem, damageData, brkDamageData, brkRecoveredData, crowdControlData, stunBreakData, agentData, skillData, evtcVersion);
+                    AddBuffDamageDamageEvent(combatItem, damageData, brkDamageData, brkRecoveredData, crowdControlData, stunBreakData, agentData, skillData);
                 }
             }
             else if (combatItem.IsStateChange != StateChange.Combat)
@@ -609,8 +611,7 @@ public partial class CombatData
                 else
                 {
                     AddStateChangeEvent(logData.EvtcLogOffset, combatItem, agentData, skillData,
-                        wepSwaps, buffEvents, stunBreakData,
-                        evtcVersion, settings, apiController);
+                        wepSwaps, buffEvents, stunBreakData, settings, apiController);
                 }
             }
         }
@@ -630,17 +631,17 @@ public partial class CombatData
         HasAgentInfo = evtcVersion.Build >= ArcDPSBuilds.AgentInfoAdded;
 
         operation.UpdateProgressWithCancellationCheck("Parsing: Combining SkillInfo/BuffInfo with SkillData");
-        skillData.CombineWithInfoEvents(_metaDataEvents.SkillInfoEvents, _metaDataEvents.BuffInfoEvents);
+        skillData.CombineWithInfoEvents(_metaDataEvents.SkillInfoEventBySkillID, _metaDataEvents.BuffInfoEventByBuffID);
 
         operation.UpdateProgressWithCancellationCheck("Parsing: Creating Cast Events");
-        List<AnimatedCastEvent> animatedCastData = CreateCastEvents(evtcVersion, castCombatEvents, agentData, skillData, logData, _metaDataEvents.EmoteGUIDEventsByEmoteID);
+        List<AnimatedCastEvent> animatedCastData = CreateCastEvents(castCombatEvents, agentData, skillData, logData, _metaDataEvents.EmoteGUIDEventsByEmoteID);
         _weaponSwapData = wepSwaps.GroupBy(x => x.Caster).ToDictionary(x => x.Key, x => x.ToList());
         _animatedCastData = animatedCastData.GroupBy(x => x.Caster).ToDictionary(x => x.Key, x => x.ToList());
         //TODO_PERF(Rennorb)
         _instantCastData = [];
         _instantCastDataByID = [];
         _animatedCastDataByID = animatedCastData.GroupBy(x => x.SkillID).ToDictionary(x => x.Key, x => x.ToList());
-        if (evtcVersion.Build >= ArcDPSBuilds.EmoteAndGadgetInteractionAdded && _animatedCastDataByID.TryGetValue(ArcDPSGenericEmote, out var emoteCasts))
+        if (evtcVersion.Build >= ArcDPSBuilds.EmoteAndGadgetInteractionAdded && _animatedCastDataByID.TryGetValue(ArcDPSEmote, out var emoteCasts))
         {
             operation.UpdateProgressWithCancellationCheck("Parsing: Creating Emote Events");
             var emotes = emoteCasts.OfType<EmoteEvent>().ToList();

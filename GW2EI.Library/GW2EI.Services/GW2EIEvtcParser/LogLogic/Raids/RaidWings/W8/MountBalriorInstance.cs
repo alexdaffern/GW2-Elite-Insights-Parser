@@ -19,7 +19,6 @@ internal class MountBalriorInstance : MountBalrior
     private readonly IReadOnlyList<MountBalrior> _subLogics;
     public MountBalriorInstance(int triggerID) : base(triggerID)
     {
-        LogID = LogIDs.LogMasks.Unsupported;
         Icon = InstanceIconMountBalrior;
         Extension = "mntbalr";
 
@@ -288,8 +287,8 @@ internal class MountBalriorInstance : MountBalrior
     internal override void EIEvtcParse(ulong gw2Build, EvtcVersionEvent evtcVersion, LogData logData, AgentData agentData, List<CombatItem> combatData, IReadOnlyDictionary<uint, ExtensionHandler> extensions)
     {
         DecimaTheStormsinger.FindConduits(agentData, combatData);
-        UraTheSteamshrieker.FindGeysers(evtcVersion, agentData, combatData);
-        UraTheSteamshrieker.FindBloodstoneShards(evtcVersion, agentData, combatData);
+        UraTheSteamshrieker.FindGeysers(agentData, combatData);
+        UraTheSteamshrieker.FindBloodstoneShards(agentData, combatData);
         base.EIEvtcParse(gw2Build, evtcVersion, logData, agentData, combatData, extensions);
         GreerTheBlightbringer.RenameProtoGreerlings(Targets, evtcVersion);
         UraTheSteamshrieker.RenameFumarollersAndVentshots(Targets, evtcVersion);

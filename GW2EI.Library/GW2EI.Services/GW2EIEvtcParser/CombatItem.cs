@@ -1,11 +1,12 @@
 ﻿using System.Runtime.CompilerServices;
 using GW2EIEvtcParser.Extensions;
+using GW2EIEvtcParser.Interfaces;
 using GW2EIEvtcParser.ParsedData;
 using static GW2EIEvtcParser.ArcDPSEnums;
 
 namespace GW2EIEvtcParser;
 
-public class CombatItem
+public class CombatItem : ITimeComparable
 {
     public long Time { get; private set; }
     public ulong SrcAgent { get; private set; }
@@ -61,7 +62,7 @@ public class CombatItem
         || IsStateChange == StateChange.TickRate || IsStateChange == StateChange.WvWTeams
         || IsStateChange == StateChange.AgentInfo;
 
-    private readonly EvtcVersionEvent _version;
+    internal readonly EvtcVersionEvent _version;
 
 #if DEBUG
     // For debugging, to get rid of statechanges seen generally on all agents
@@ -166,6 +167,7 @@ public class CombatItem
             || IsStateChange == StateChange.MapChange
             || IsStateChange == StateChange.WvWObjectiveStatus
             || IsStateChange == StateChange.Tick
+            || IsStateChange == StateChange.PvPScoreUpdate
             ;
     }
 
@@ -216,7 +218,7 @@ public class CombatItem
 
     public bool IsDirectDamageEvent()
     {
-        if (_version.Build >= ArcDPSBuilds.ResultEnumRework)
+        if (Build >= ArcDPSBuilds.ResultEnumRework)
         {
             return IsStateChange == StateChange.Combat &&
                     IsBuff == 0;
@@ -230,7 +232,7 @@ public class CombatItem
 
     public bool IsBuffDamageEvent()
     {
-        if (_version.Build >= ArcDPSBuilds.ResultEnumRework)
+        if (Build >= ArcDPSBuilds.ResultEnumRework)
         {
             return IsStateChange == StateChange.Combat &&
                     IsBuff != 0;
@@ -342,7 +344,7 @@ public class CombatItem
 
     public bool IsBuffApplyEvent()
     {
-        if (_version.Build >= ArcDPSBuilds.BuffAppliesAndRemovesAsStateChanges)
+        if (Build >= ArcDPSBuilds.BuffAppliesAndRemovesAsStateChanges)
         {
             return IsStateChange == StateChange.BuffApply || IsStateChange == StateChange.BuffChange || IsStateChange == StateChange.BuffInitial;
         }
@@ -353,7 +355,7 @@ public class CombatItem
 
     public bool IsBuffRemoveEvent()
     {
-        if (_version.Build >= ArcDPSBuilds.BuffAppliesAndRemovesAsStateChanges)
+        if (Build >= ArcDPSBuilds.BuffAppliesAndRemovesAsStateChanges)
         {
             return IsStateChange == StateChange.BuffRemoveAll || IsStateChange == StateChange.BuffRemoveSingle;
         }
@@ -362,7 +364,7 @@ public class CombatItem
 
     public bool IsBuffRemoveAllEvent()
     {
-        if (_version.Build >= ArcDPSBuilds.BuffAppliesAndRemovesAsStateChanges)
+        if (Build >= ArcDPSBuilds.BuffAppliesAndRemovesAsStateChanges)
         {
             return IsStateChange == StateChange.BuffRemoveAll;
         }
@@ -412,7 +414,7 @@ public class CombatItem
 
     public bool IsStartCastEvent()
     {
-        if (_version.Build >= ArcDPSBuilds.AnimationAsStateChanges)
+        if (Build >= ArcDPSBuilds.AnimationAsStateChanges)
         {
             return IsStateChange == StateChange.AnimationStart;
         }
@@ -425,7 +427,7 @@ public class CombatItem
 
     public bool IsEndCastEvent()
     {
-        if (_version.Build >= ArcDPSBuilds.AnimationAsStateChanges)
+        if (Build >= ArcDPSBuilds.AnimationAsStateChanges)
         {
             return IsStateChange == StateChange.AnimationStop;
         }
@@ -467,6 +469,19 @@ public class CombatItem
     internal void OverrideValue(int value)
     {
         Value = value;
+    }
+
+    public bool IsAtTime(long time, long epsilon = ParserHelper.ServerDelayConstant)
+    {
+        return Math.Abs(time - Time) < epsilon;
+    }
+    public bool IsAtTime(TimeCombatEvent evt, long epsilon = ParserHelper.ServerDelayConstant)
+    {
+        return IsAtTime(evt.Time, epsilon);
+    }
+    public bool IsAtTime(CombatItem evt, long epsilon = ParserHelper.ServerDelayConstant)
+    {
+        return IsAtTime(evt.Time, epsilon);
     }
 }
 

@@ -18,7 +18,6 @@ internal class ShatteredObservatoryInstance : ShatteredObservatory
     private readonly IReadOnlyList<ShatteredObservatory> _subLogics;
     public ShatteredObservatoryInstance(int triggerID) : base(triggerID)
     {
-        LogID = LogIDs.LogMasks.Unsupported;
         Icon = InstanceIconShatteredObservatory;
         Extension = "shtrdobs";
 
@@ -264,7 +263,7 @@ internal class ShatteredObservatoryInstance : ShatteredObservatory
     internal override void EIEvtcParse(ulong gw2Build, EvtcVersionEvent evtcVersion, LogData logData, AgentData agentData, List<CombatItem> combatData, IReadOnlyDictionary<uint, ExtensionHandler> extensions)
     {
         Skorvald.DetectUnknownAnomalies(agentData, combatData);
-        Artsariiv.DetectCloneArtsariivs(evtcVersion, agentData, combatData);
+        Artsariiv.DetectCloneArtsariivs(agentData, combatData);
         Arkk.IdentifyGadgets(agentData, combatData);
         base.EIEvtcParse(gw2Build, evtcVersion, logData, agentData, combatData, extensions);
         Skorvald.RenameAnomalies(Targets);

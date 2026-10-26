@@ -5,7 +5,6 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using GW2EIEvtcParser;
-using GW2EIParserAvalonia.Models;
 using GW2EIParserAvalonia.Services;
 using GW2EIParserAvalonia.ViewModels;
 
@@ -51,52 +50,34 @@ public partial class InspectorWindow : Window
         }
     }
 
-    private async void CopyGuid_Click(object? sender, RoutedEventArgs e)
+    private async void CopyValue_Click(object? sender, RoutedEventArgs e)
     {
-        if (sender is not MenuItem menuItem || menuItem.CommandParameter is not ContentGUIDModel model)
+        if (sender is not MenuItem { CommandParameter: { } value })
         {
             return;
         }
 
         var clipboard = GetTopLevel(this)?.Clipboard;
-        if (clipboard is null)
-        {
-            return;
-        }
 
-        await clipboard.SetTextAsync(model.GUID.ToString());
+        if (clipboard is not null)
+        {
+            await clipboard.SetTextAsync(value.ToString() ?? string.Empty);
+        }
     }
 
-    private async void CopyContentId_Click(object? sender, RoutedEventArgs e)
+    private async void Filter_GotFocus(object? sender, RoutedEventArgs e)
     {
-        if (sender is not MenuItem menuItem || menuItem.CommandParameter is not ContentGUIDModel model)
+        if (sender is not AutoCompleteBox autoCompleteBox ||
+            DataContext is not InspectorViewModel inspectorViewModel)
         {
             return;
         }
 
-        var clipboard = GetTopLevel(this)?.Clipboard;
-        if (clipboard is null)
+        await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            return;
-        }
-
-        await clipboard.SetTextAsync(model.ContentID.ToString());
-    }
-
-    private async void AgentFilter_GotFocus(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is not InspectorViewModel inspectorViewModel)
-        {
-            return;
-        }
-        if (sender is AutoCompleteBox autoCompleteBox)
-        {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                inspectorViewModel.AgentSelectFilterDropdownTriggered = true;
-                autoCompleteBox.IsDropDownOpen = true;
-                inspectorViewModel.AgentSelectFilterDropdownTriggered = false;
-            });
-        }
+            inspectorViewModel.DropdownFilterTriggered = true;
+            autoCompleteBox.IsDropDownOpen = true;
+            inspectorViewModel.DropdownFilterTriggered = false;
+        });
     }
 }

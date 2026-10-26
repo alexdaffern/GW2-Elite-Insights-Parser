@@ -22,7 +22,6 @@ internal class BastionOfThePenitentInstance : BastionOfThePenitent
     private readonly IReadOnlyList<BastionOfThePenitent> _subLogics;
     public BastionOfThePenitentInstance(int triggerID) : base(triggerID)
     {
-        LogID = LogIDs.LogMasks.Unsupported;
         Icon = InstanceIconBastionOfThePenitent;
         Extension = "bstpen";
 
@@ -350,6 +349,7 @@ internal class BastionOfThePenitentInstance : BastionOfThePenitent
 
     internal override void EIEvtcParse(ulong gw2Build, EvtcVersionEvent evtcVersion, LogData logData, AgentData agentData, List<CombatItem> combatData, IReadOnlyDictionary<uint, ExtensionHandler> extensions)
     {
+        MursaatOverseer.IdentifyMursaatCheckboards(gw2Build, evtcVersion, agentData, combatData, extensions);
         Samarog.HandleSpears(evtcVersion, agentData, combatData);
         Deimos.HandleDemonicBonds(agentData, combatData);
         Deimos.HandleShackledPrisoners(agentData, combatData);

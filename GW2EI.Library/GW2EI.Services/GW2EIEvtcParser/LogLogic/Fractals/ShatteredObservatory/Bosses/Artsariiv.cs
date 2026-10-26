@@ -26,7 +26,7 @@ internal class Artsariiv : ShatteredObservatory
             new PlayerDstHealthDamageHitMechanic([RedMarble1, RedMarble2], Mech_RedMarble, new (Symbols.Circle,Colors.Red), new("Marble", "Red KD Marble after Jump","Red Marble"), Sev0),
             new PlayerDstHealthDamageHitMechanic([TawShot1, TawShot2, TawShot3, TawShot4], Mech_TawShot, new (Symbols.CircleOpen, Colors.Red), new("Taw Shot", "Hit by Taw Shot projectile", "Taw Shot"), Sev2),
             new PlayerSrcHealthDamageHitMechanic([TawShot1, TawShot2, TawShot3, TawShot4], Mech_TawShotReflected, new (Symbols.CircleXOpen, Colors.Red), new("Taw Shot Rfl.", "Hit reflected Taw Shot projectile", "Taw Shot Reflect"), Sev0),
-            new SpawnMechanic((int)TargetID.Spark, Mech_SparkSpawn, new (Symbols.Star,Colors.Teal),new("Spark","Spawned a Spark (missed marble)", "Spark"), Sev0),
+            new SpawnMechanic((int)TargetID.SparkArtsariiv, Mech_SparkSpawn, new (Symbols.Star,Colors.Teal),new("Spark","Spawned a Spark (missed marble)", "Spark"), Sev0),
         ]);
 
     public Artsariiv(int triggerID) : base(triggerID)
@@ -58,15 +58,14 @@ internal class Artsariiv : ShatteredObservatory
 
     internal override IReadOnlyList<TargetID> GetTrashMobsIDs()
     {
-        var trashIDs = new List<TargetID>(5 + base.GetTrashMobsIDs().Count);
-        trashIDs.AddRange(base.GetTrashMobsIDs());
-        trashIDs.Add(TargetID.TemporalAnomalyArtsariiv);
-        trashIDs.Add(TargetID.Spark);
-        trashIDs.Add(TargetID.SmallArtsariiv);
-        trashIDs.Add(TargetID.MediumArtsariiv);
-        trashIDs.Add(TargetID.BigArtsariiv);
-
-        return trashIDs;
+        return [
+            .. base.GetTrashMobsIDs(),
+            TargetID.TemporalAnomalyArtsariiv,
+            TargetID.SparkArtsariiv,
+            TargetID.SmallArtsariiv,
+            TargetID.MediumArtsariiv,
+            TargetID.BigArtsariiv,
+        ];
     }
 
     internal static IReadOnlyList<SubPhasePhaseData> ComputePhases(ParsedEvtcLog log, SingleActor artsariiv, IReadOnlyList<SingleActor> targets, EncounterPhaseData encounterPhase, bool requirePhases)
@@ -125,13 +124,13 @@ internal class Artsariiv : ShatteredObservatory
         ];
     }
 
-    internal static bool DetectCloneArtsariivs(EvtcVersionEvent evtcVersion, AgentData agentData, List<CombatItem> combatData)
+    internal static bool DetectCloneArtsariivs(AgentData agentData, List<CombatItem> combatData)
     {
         var artsariivMarkerGUID = combatData
             .Where(x => x.IsStateChange == StateChange.IDToGUID &&
                 GetContentLocal((byte)x.OverstackValue) == ContentLocal.Marker &&
                 MarkerGUIDs.ArtsariivTripleLaserEyeMarker.Equals(x.SrcAgent, x.DstAgent, true))
-            .Select(x => new MarkerGUIDEvent(x, evtcVersion))
+            .Select(x => new MarkerGUIDEvent(x))
             .FirstOrDefault();
         if (artsariivMarkerGUID != null)
         {
@@ -190,7 +189,7 @@ internal class Artsariiv : ShatteredObservatory
 
     internal override void EIEvtcParse(ulong gw2Build, EvtcVersionEvent evtcVersion, LogData logData, AgentData agentData, List<CombatItem> combatData, IReadOnlyDictionary<uint, ExtensionHandler> extensions)
     {
-        if (!DetectCloneArtsariivs(evtcVersion, agentData, combatData))
+        if (!DetectCloneArtsariivs(agentData, combatData))
         {
             // Legacy
             var targetArtsariiv = FindTargetArtsariiv(agentData);

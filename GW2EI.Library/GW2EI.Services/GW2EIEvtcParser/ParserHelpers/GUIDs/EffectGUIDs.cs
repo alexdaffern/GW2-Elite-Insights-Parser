@@ -22,6 +22,10 @@ public static class EffectGUIDs
     public static readonly Guid EnemyAoE180 = new("60C2DD0478450F4B81BAA6486227872A"); // split compound with effect for hostile, radius 180, e.g. guardian symbols
     public static readonly Guid EnemyAoE240 = new("2125A13079C1C5479C150926EB60A15D"); // split compound with effect for hostile, radius 240, e.g. guardian symbols
     public static readonly Guid AoEWhiteOutline180 = new("E37AD3E0D6DA364999D987D9DDFC9707"); // split compound with generic white outline for ally
+    public static readonly Guid AoEIndicatorFilling280 = new("99C7A4DB18932F4F8D2D1A4D7543B52C"); // owned by attacker, duration 3000
+    public static readonly Guid ArrowIndicator = new("27563132F8532847B4DD2CA7AB5B9CE8"); // owned by attacker
+    public static readonly Guid UpdraftPulse1 = new("619CCF0F723DE24892E8158226FBB53A"); // no owner, duration 3366ms
+    public static readonly Guid UpdraftPulse2 = new("ADC809B9FB2D9841807CABB43FCDD5FF"); // owned by gadget, duration 1500ms
     #endregion
 
     #region Mounts
@@ -137,12 +141,25 @@ public static class EffectGUIDs
     public static readonly Guid TroubadourTaleOfTheSoulkeeper = new("FF116F5E112DA042B238469590A1FCD8"); // 3833 duration
     public static readonly Guid TroubadourTaleOfTheValiantMarshal = new("EBC45B862D299143B4D63CB6CAEC26ED"); // 3833 duration
     public static readonly Guid TroubadourTaleOfTheHonorableRogue = new("DBECB5867D11264FA19FFCDC487A410E"); // 3833 duration
-    public static readonly Guid TroubadourDeafeningDrumCast = new("7BE5ABD87A4B3A4AACE4CC54C394B683");  // 0 duration, around Dst
+    public static readonly Guid TroubadourLivelyLuteWave1 = new("A1B58DC5618F2F4C88D36029FBB4485F"); // 0 duration, src/dst troub
+    public static readonly Guid TroubadourLivelyLuteWave2 = new("0F130B2C38BDBC4BABE3AE7B1A839187"); // 0 duration, src/dst troub
+    public static readonly Guid TroubadourLivelyLuteWave3 = new("942AD403DD10BA4794BAC84D3A59BF56"); // 1000 duration, src/dst troub, collision with Honorable Rogue
+    public static readonly Guid TroubadourFlusteringFluteWave1 = new("3F64FF4D084EC44C9427F6D7A41B4C8F"); // 0 duration, src/dst troub
+    public static readonly Guid TroubadourFlusteringFluteWave2 = new("1BD9129B32914441B2AE70851087FDF1"); // 1000 duration, src/dst troub
     public static readonly Guid TroubadourDeafeningDrumWave1 = new("294F0B29212D3C4C9EEAF0A8CB99FB77"); // 0 duration, around Dst
     public static readonly Guid TroubadourDeafeningDrumWave2 = new("12710FBBA5681A4EA117FD39A7A207FB"); // 2000 duration, around Dst
-    public static readonly Guid TroubadourDeafeningDrumWave3 = new("C7B5AD810BB6534AB324A25FBD0BED4D"); // 0 duration, around Dst
+    public static readonly Guid TroubadourDeafeningDrumWave3 = new("C7B5AD810BB6534AB324A25FBD0BED4D"); // 0 duration, around Dst, collision with Honorable Rogue
     public static readonly Guid TroubadourSyncopateDelayedWave1 = new("24498E18DEC97B4094376849EF7A3746"); // 2000 duration, around Dst
     public static readonly Guid TroubadourSyncopateDelayedWave2 = new("8ECB35B63BA6C045BE9F0B864972B983"); // 0 duration, around Dst
+    public static readonly Guid TroubadourHarmoniusHarpWave1 = new("C0F50F36E55D7B4C9D7A8BCFD1D1B4D3"); // 0 duration, around Dst
+    public static readonly Guid TroubadourHarmoniusHarpWave2 = new("04ABA8DFA5D7E5468B8FE7C2E3655738"); // 0 duration, around Dst
+    public static readonly Guid TroubadourHarmoniusHarpWave3 = new("44004307AE2F9B46883DF340AAAF3439"); // 0 duration, around Dst
+    public static readonly Guid TroubadourHarmoniusHarpWave4 = new("24A5462B19C7BC46B3A23D05CCC57D5A"); // 1000 duration, around Dst
+    public static readonly Guid TroubadourHarmoniusHarpWave5 = new("7F4D3C67DC866E4C9143FA98B6BAB3A2"); // 1000 duration, around Dst
+    public static readonly Guid TroubadourNote1 = new("513843DFD3293D4CA6E3743D79A7246D");
+    public static readonly Guid TroubadourNote2 = new("A8B672F7A86EBC4AAF3783B8D2E94C8D");
+    public static readonly Guid TroubadourNote3 = new("5D5E82DD9912C440B50C842C3FB2B40F");
+
     #endregion
 
     #region Necromancer
@@ -469,6 +486,7 @@ public static class EffectGUIDs
     public static readonly Guid UntamedMutateConditions = new("D7DCD4ABF9E4A749950AF0175E02EA06");
     public static readonly Guid UntamedUnnaturalTraversal = new("8D36806A690A5442A983308EDCECB018");
     public static readonly Guid UntamedVenomousOutburst = new("60BE4692A455B140A05AD794BF4753F6");
+    public static readonly Guid UntamedVenomousOutburst2 = new("A635307E0E955E44B84F14E25A25FC7F");
     public static readonly Guid UntamedRendingVines = new("2C40B0741111444F98895A658A7F978F");
     public static readonly Guid UntamedEnvelopingHaze = new("F2B1B61970FC59418AC049BF3A07FFD4");
     public static readonly Guid GaleshotSummonCycloneBow = new("C1F1E386CC1E0B448435269DBBFB34D7"); // Duration 2333 - IsAroundDst
@@ -659,6 +677,26 @@ public static class EffectGUIDs
     public static readonly Guid WhisperingShadowWintryOrb2 = new("795EC8C08BDB514794900B1107C07EC5"); // no owner, default duration 1167ms
     public static readonly Guid WhisperingShadowHailstorm1 = new("C127DECDC53F13428FF21CF0C236C25D"); // no owner, default duration 6667ms
     public static readonly Guid WhisperingShadowHailstorm2 = new("66046924ADCA9E4F831A44E2B4ACA40C"); // no owner, default duration 1167ms
+    // Solitary Throne Fractal
+    public static readonly Guid EternalTyrantCosmicBlast = new("00BD9C27CCD7D24A84FF4B0878A1EC22"); // owned by tyrant, embers, frost elementals, sparks and earth elementals, duration 10000ms
+    public static readonly Guid EternalTyrantGravityFieldIndicator = new("5B8556FF8297754790CD6377D3B7C1D6"); // owned by tyrant, duration 6000ms
+    public static readonly Guid EternalTyrantGravityFieldSpawn = new("00963C48EA253D44B14B91C534104B4E"); // no owner, duration 6000ms
+    public static readonly Guid EternalTyrantGravityField = new("C73F97F8F1A4EA4AB31DDCB76F2E2866"); // owned by gadget, duration 120000ms
+    public static readonly Guid EternalTyrantGravityFieldOutline = new("84805BACFF79AC4AB23525576B101DC7"); // owned by gadget, duration infinite
+    public static readonly Guid EternalTyrantAstralBarrage1 = new("A478BD35F568974091FC99670B5A9700"); // owned by tyrant, duration 1500ms
+    public static readonly Guid EternalTyrantAstralBarrage2 = new("912F68E45158C14E9A30D6011B7B0C7F"); // owned by tyrant, duration 7000ms
+    public static readonly Guid EternalTyrantAstralBarrageAudio = new("02F610D9C8015E46892A216AA82B00C8"); // owned by tyrant, duration 1500ms
+    public static readonly Guid EternalTyrantCosmicWaveWindup1 = new("93D225B6CF002448A0AA8C6C98A8F373"); // owned by tyrant, duration 3333ms
+    public static readonly Guid EternalTyrantCosmicWaveWindup2 = new("139952BB07EEA1428A5E509EFD71E009"); // owned by tyrant, duration 3333ms
+    public static readonly Guid EternalTyrantCosmicWaveIndicator = new("01D633F85F5B65468503C5BC6A9EBC0E"); // owned by tyrant, duration 2000ms
+    public static readonly Guid EternalTyrantCosmicWave = new("F697B3EF5603D3489D24E870ABCAE4B6"); // owned by tyrant, duration 1166ms
+    public static readonly Guid EternalTyrantCelestialImpactIndicator = new("A68AD70CD0A68F48BADECA8E8AE00EFF"); // owned by tyrant, duration 43000ms
+    public static readonly Guid EternalTyrantCelestialImpactIndicatorFast = new("F11DE83882CEE049BA27C97FBAF3398A"); // owned by tyrant, duration 6200ms
+    public static readonly Guid EternalTyrantCelestialImpact = new("BD2055967CE7D443AF24BFC45EF4DB70"); // owned by tyrant, duration 3333ms
+    public static readonly Guid EternalTyrantSearingRadial = new("33C7787156D3C44CB320C9975A37A4C6"); // owned by fire dais gadget, duration 24590ms
+    public static readonly Guid EternalTyrantStormSummoning = new("D0471A4E6D69A44CB7E1E2E9A014FB5E"); // owned by ice dais gadget, duration 3000ms
+    public static readonly Guid EternalTyrantJadeShards = new("F6208F6A171D894E8AE93B2EEA815243"); // owned by earth dais gadget, duration 3000ms
+    public static readonly Guid EternalTyrantLightningStrike = new("62477FC998B5D248B6F6BDF103FD0DCC"); // owned by air dais gadget, duration 2000ms
     #endregion
 
     #region Raids
@@ -1134,7 +1172,6 @@ public static class EffectGUIDs
     public static readonly Guid NexusOfEternityJudgmentOfEternity3PeopleGreenFail = new("092F93A0CCA8EA48B54594EF6A2683B7"); // duration 2666
     public static readonly Guid NexusOfEternityAscensionsSacrifice2PeopleGreenSelect = new("A47987D0864223429B261683B6452826"); // src vloxx, dst player, duration 5000
     public static readonly Guid NexusOfEternityProbabilityDistributionSpreadAndPuddleDrop = new("BDF708225224C64183BA3CE2A609D37F"); // src vloxx, dst player, duration 5000
-    public static readonly Guid NexusOfEternityProbabilityDistributionIndicator = new("99C7A4DB18932F4F8D2D1A4D7543B52C"); // src vloxx, duration 3000
     public static readonly Guid NexusOfEternityProbabilityDistributionVisionsOfEternityExplosionTBC = new("C35796367350D74CA26BA0B8792D9F65"); // src vloxx, duration 2333, the explosion when the puddle is created?
     public static readonly Guid NexusOfEternityWorldpiercerLineBarrier = new("490F98F24F33004093FCA91038E2C1B2"); // src vloxx, duration infinite, has dynamic end, oriented, dropped under Worldpiercer missile
     public static readonly Guid NexusOfEternityWorldpiercerIndicator = new("635554D77C7C5C4E81367013B99A14BB"); // src vloxx, duration 2666, singular effect for all 3 beams
@@ -1142,7 +1179,7 @@ public static class EffectGUIDs
     public static readonly Guid NexusOfEternitySurroundingCurseIndicator = new("B21F84B9ABF75949B3782089A29DB7A4"); // src vloxx, duration 3500
     public static readonly Guid NexusOfEternitySurroundingCurseRagingStormExplosions = new("D200E82ECBB9194DB8DB8BAEBF531673"); // src vloxx, duration 2666 - Conflict with base aoe difference and no flags - Surrounding Curse 200 - Raging Storm 150
     public static readonly Guid NexusOfEternityRagingStormIndicator = new("D11320204E28E643A48469AA8E4845BA"); // src vloxx, duration 3000
-    public static readonly Guid NexusOfEternityCosmicExplosionAoE = new("A8AA7A32731DBF4AB2301495C89624A6"); // src vloxx, duration 1666
+    public static readonly Guid NexusOfEternityEternalReflectionAscensionsSacrificeExplosionAoE = new("A8AA7A32731DBF4AB2301495C89624A6"); // src vloxx, staff, piercer - duration 1666 - Conflict with Ascension's Sacrifice failure
     public static readonly Guid NexusOfEternityAnnihilatingOrbArrowIndicator = new("1A262BDD265422439BE245BB67D374F5");
     public static readonly Guid NexusOfEternityAnnihilatingOrbTeleportRingsIndicator = new("EE7B17875C502A499B2DCA60C3A44602"); // src teleporter, duration 4000
     public static readonly Guid NexusOfEternityBlueShield = new("51A65F90A99E2043ACB54EEA4EC494F0"); // src teleporter, duration 5000
@@ -1150,9 +1187,9 @@ public static class EffectGUIDs
     //public static readonly Guid NexusOfEternityUndefined1 = new("29E4FF27335CD045962342511841CBCA"); // duration 3333
     //public static readonly Guid NexusOfEternityUndefined2 = new("71D5D17395B8834086033B0F0AF245E4"); // duration 3033
     public static readonly Guid NexusOfEternityVloxxEchoingBladeExcisionExtremisIndicator = new("A5962B65A450534EA76BDEE374C2708B"); // src vloxx and sunderer, duration 1500/2500, echoing blade, excision extremis, echoing attack
-    public static readonly Guid NexusOfEternityVloxxEchoingBladeSwordSwing = new("40EF37BFC16E2744865BBFDD8DC748DF"); // src vloxx, duration 1000
-    public static readonly Guid NexusOfEternityVloxxExcisionExtremisDivisionEternalSwordSwing = new("B486884192085E4BB45FF076F994B0B6"); // src vloxx, duration 833, echoing blade, excision extremis, division eternal
-    public static readonly Guid NexusOfEternityChampionSundererEchoingAttackExcisionSwordSwing = new("F2485AEE8C0CE64D90AFE149D9C88C86"); // src sunderer, duration 833, echoing attack, excision
+    public static readonly Guid NexusOfEternityVloxxEchoingBlade_SwordSwing = new("40EF37BFC16E2744865BBFDD8DC748DF"); // src vloxx, duration 1000
+    public static readonly Guid NexusOfEternityVloxxAndAspectSword_ExcisionExtremis_DivisionEternal_SwordSwing = new("B486884192085E4BB45FF076F994B0B6"); // src vloxx, duration 833, echoing blade, excision extremis, division eternal
+    public static readonly Guid NexusOfEternityChampionSundererAndAspectSword_EchoingAttack_Excision_SwordSwing = new("F2485AEE8C0CE64D90AFE149D9C88C86"); // src sunderer, duration 833, echoing attack, excision
     public static readonly Guid NexusOfEternityDivisionEternalIndicator = new("5614D57DBA8E1B43A97EB03D904D5B89"); // src vloxx, duration 3000
     public static readonly Guid NexusOfEternityVloxxStaffBigConeIndicator = new("4B6532EC3792184DA4CAF258E1E9E45D"); // src vloxx, duration 8000, has dynamic end // TODO VERIFY THIS
     public static readonly Guid NexusOfEternityVisionsOfEternityIndicator = new("4B6532EC3792184DA4CAF258E1E9E45D");

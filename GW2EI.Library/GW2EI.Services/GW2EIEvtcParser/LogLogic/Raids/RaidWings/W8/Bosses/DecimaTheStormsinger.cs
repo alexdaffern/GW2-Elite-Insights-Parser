@@ -513,12 +513,7 @@ internal class DecimaTheStormsinger : MountBalrior
                 }
 
                 // Flux Nova - Breakbar
-                var breakbarUpdates = target.GetBreakbarPercentUpdates(log);
-                var (breakbarNones, breakbarActives, breakbarImmunes, breakbarRecoverings) = target.GetBreakbarStatus(log);
-                foreach (var segment in breakbarActives)
-                {
-                    replay.Decorations.AddActiveBreakbar(segment.TimeSpan, target, breakbarUpdates);
-                }
+                replay.Decorations.AddActiveBreakbars(log, target);
                 break;
             case (int)TargetID.GreenOrb1Player:
             case (int)TargetID.GreenOrb1PlayerCM:
@@ -642,7 +637,7 @@ internal class DecimaTheStormsinger : MountBalrior
                                     uint radius = 800;
                                     long warningDuration = effect.Time - cast.Time;
                                     (long start, long end) lifespanWarning = (cast.Time, effect.Time);
-                                    (long start, long end) lifespanDamage = effect.ComputeDynamicLifespan(log, 30000);
+                                    (long start, long end) lifespanDamage = effect.ComputeLifespan(log, 30000);
                                     lifespanWarning.end = ComputeEndCastTimeByBuffApplication(log, target, Stun, cast.Time, warningDuration); // Cast can be interrupted
 
                                     var warningIndicator = new CircleDecoration(radius, lifespanWarning, Colors.LightOrange, 0.2, new PositionConnector(effect.Position));
@@ -879,7 +874,7 @@ internal class DecimaTheStormsinger : MountBalrior
             var damageData = p.GetDamageTakenEvents(null, log).Where(x => fluxlanceIDs.Contains(x.SkillID) || thunderIDs.Contains(x.SkillID)).ToList();
             foreach (var evt in exposeds)
             {
-                if (damageData.Any(x => Math.Abs(x.Time - evt.Time) < ServerDelayConstant))
+                if (damageData.Any(x => x.IsAtTime(evt)))
                 {
                     InsertAchievementEligibityEventAndRemovePhase(decimaCMPhases, thisBugCanDanceEligibilityEvents, evt.Time, Ach_ThisBugCanDance, p);
                 }

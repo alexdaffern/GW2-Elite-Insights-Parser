@@ -197,14 +197,14 @@ internal class UraTheSteamshrieker : MountBalrior
         return startToUse;
     }
 
-    internal static void FindGeysers(EvtcVersionEvent evtcVersion, AgentData agentData, List<CombatItem> combatData)
+    internal static void FindGeysers(AgentData agentData, List<CombatItem> combatData)
     {
         // titanspawn geysers
         var titanGeyserMarkerGUID = combatData
             .Where(x => x.IsStateChange == StateChange.IDToGUID &&
                 GetContentLocal((byte)x.OverstackValue) == ContentLocal.Marker &&
                 MarkerGUIDs.UraTitanspawnGeyserMarker.Equals(x.SrcAgent, x.DstAgent, true))
-            .Select(x => new MarkerGUIDEvent(x, evtcVersion))
+            .Select(x => new MarkerGUIDEvent(x))
             .FirstOrDefault();
         if (titanGeyserMarkerGUID != null)
         {
@@ -223,7 +223,7 @@ internal class UraTheSteamshrieker : MountBalrior
             .Where(x => x.IsStateChange == StateChange.IDToGUID &&
                 GetContentLocal((byte)x.OverstackValue) == ContentLocal.Effect &&
                 (EffectGUIDs.UraToxicGeyserSpawn.Equals(x.SrcAgent, x.DstAgent, true) || EffectGUIDs.UraToxicGeyserSpawnCM.Equals(x.SrcAgent, x.DstAgent, true)))
-            .Select(x => new EffectGUIDEvent(x, evtcVersion))
+            .Select(x => new EffectGUIDEvent(x))
             .FirstOrDefault();
         if (toxicEffectGUID != null)
         {
@@ -259,14 +259,14 @@ internal class UraTheSteamshrieker : MountBalrior
         }
     }
 
-    internal static void FindBloodstoneShards(EvtcVersionEvent evtcVersion, AgentData agentData, List<CombatItem> combatData)
+    internal static void FindBloodstoneShards(AgentData agentData, List<CombatItem> combatData)
     {
         // Bloodstone shards
         var bloodstoneShardMarkerGUID = combatData
             .Where(x => x.IsStateChange == StateChange.IDToGUID &&
                 GetContentLocal((byte)x.OverstackValue) == ContentLocal.Marker &&
                 MarkerGUIDs.UraBloodstoneShardMarker.Equals(x.SrcAgent, x.DstAgent, true))
-            .Select(x => new MarkerGUIDEvent(x, evtcVersion))
+            .Select(x => new MarkerGUIDEvent(x))
             .FirstOrDefault();
         if (bloodstoneShardMarkerGUID != null)
         {
@@ -341,8 +341,8 @@ internal class UraTheSteamshrieker : MountBalrior
     }
     internal override void EIEvtcParse(ulong gw2Build, EvtcVersionEvent evtcVersion, LogData logData, AgentData agentData, List<CombatItem> combatData, IReadOnlyDictionary<uint, ExtensionHandler> extensions)
     {
-        FindGeysers(evtcVersion, agentData, combatData);
-        FindBloodstoneShards(evtcVersion, agentData, combatData);
+        FindGeysers(agentData, combatData);
+        FindBloodstoneShards(agentData, combatData);
         base.EIEvtcParse(gw2Build, evtcVersion, logData, agentData, combatData, extensions);
         RenameFumarollersAndVentshots(Targets, evtcVersion);
         RenameFumarollersAndVentshots(TrashMobs, evtcVersion);
@@ -377,7 +377,7 @@ internal class UraTheSteamshrieker : MountBalrior
             foreach (var swapEvent in swapEvents)
             {
                 if ((swapEvent.SwappedFrom == WeaponSetIDs.KitSet || swapEvent.SwappedTo == WeaponSetIDs.KitSet) &&
-                    deterrenceAppliesOnPicker.Any(x => Math.Abs(x.Time - swapEvent.Time) < ServerDelayConstant))
+                    deterrenceAppliesOnPicker.Any(x => x.IsAtTime(swapEvent)))
                 {
                     swapEvent.FlagAsSpecialBundleSwap();
                 }
@@ -582,7 +582,7 @@ internal class UraTheSteamshrieker : MountBalrior
                         {
                             counter = 0;
                         }
-                        lifespan = effect.ComputeDynamicLifespan(log, 1200);
+                        lifespan = effect.ComputeLifespan(log, 1200);
                         uint radius = initialRadius + (radiusIncrease * counter);
                         replay.Decorations.Add(new CircleDecoration(radius, lifespan, Colors.Red, 0.2, new AgentConnector(target)).UsingFilled(false));
                         counter++;
@@ -592,9 +592,7 @@ internal class UraTheSteamshrieker : MountBalrior
                     replay.Decorations.AddOverheadIcons(target.GetBuffStatus(log, HardenedCrust).Where(x => x.Value > 0), target, BuffImages.HardenedCrust);
 
                     // Breakbar
-                    var toxicPercentUpdates = target.GetBreakbarPercentUpdates(log);
-                    var toxicStates = target.GetBreakbarStatus(log);
-                    replay.Decorations.AddBreakbar(target, toxicPercentUpdates, toxicStates);
+                    replay.Decorations.AddBreakbars(log, target);
                 }
                 else
                 {
@@ -617,9 +615,7 @@ internal class UraTheSteamshrieker : MountBalrior
                 replay.Decorations.AddOverheadIcons(target.GetBuffStatus(log, HardenedCrust).Where(x => x.Value > 0), target, BuffImages.HardenedCrust);
 
                 // Breakbar
-                var titanspawnPercentUpdates = target.GetBreakbarPercentUpdates(log);
-                var titanspawnStates = target.GetBreakbarStatus(log);
-                replay.Decorations.AddBreakbar(target, titanspawnPercentUpdates, titanspawnStates);
+                replay.Decorations.AddBreakbars(log, target);
                 break;
             case (int)TargetID.LegendaryVentshot:
                 foreach (CastEvent cast in target.GetAnimatedCastEvents(log))
@@ -829,7 +825,7 @@ internal class UraTheSteamshrieker : MountBalrior
                             long effectDuration = 800000;
                             foreach (var effect in eruptions.Where(x => x.Duration == effectDuration))
                             {
-                                (long start, long end) = effect.ComputeDynamicLifespan(log, effectDuration);
+                                (long start, long end) = effect.ComputeLifespan(log, effectDuration);
                                 // Making sure we don't use start + 800000 if an Effect End isn't present due to the encounter ending without interrupting the geyser.
                                 if (Math.Min(end, log.LogData.LogEnd) - start > 30000)
                                 {
